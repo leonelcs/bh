@@ -41,4 +41,4 @@ address in the application.properties
 
 The code was formated using the google style
 
-PS: the folder is called kubernetes but I didn't have time to finish the kubernetes version and I used the docker-compose instead.
+PS: the folder k8s is related to kubernetes but I didn't have time to finish the kubernetes version and I used the docker-compose instead.
