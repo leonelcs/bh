@@ -64,9 +64,8 @@ public class AccountServiceImpl implements AccountService {
         }
 
     ).orElseThrow(() -> new CustomerNotFoundException("The Customer ID: "+accountRequest.getCustomerId()+" is not present in the system"));
-    return accountRepository.findById(accountId).map(
-        account -> account
-    ).orElseThrow( () -> new CustomerNotFoundException("The Customer ID: "+accountRequest.getCustomerId()+" is not present in the system") );
+    return accountRepository.findById(accountId)
+        .orElseThrow( () -> new CustomerNotFoundException("The Account of the Customer ID: "+accountRequest.getCustomerId()+" is not present in the system") );
 
   }
 

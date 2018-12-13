@@ -17,14 +17,16 @@ import lombok.NonNull;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CustomerAccountTest {
 
   @InjectMocks
@@ -48,16 +50,11 @@ public class CustomerAccountTest {
 
   @Before
   public void before() {
+
     Customer customer = createCustomer(false);
     Customer expected = createCustomer(true);
 
     Mockito.when(customerRepository.save(customer)).thenReturn(expected);
-
-    Optional<Customer> optCustomer = Optional.of(createCustomer(true));
-    Mockito.when(customerRepository.findById(CUSTOMER_ID)).thenReturn(optCustomer);
-
-    Optional<Account> optAccount = Optional.of(createAccount());
-    Mockito.when(accountRepository.findById(ACCOUNT_ID)).thenReturn(optAccount);
 
   }
 
@@ -70,15 +67,6 @@ public class CustomerAccountTest {
     MatcherAssert.assertThat(expected.getId(), Matchers.is( actual.getId() ));
   }
 
-  @Test
-  public void testCreateAccount() {
-    AccountRequest request = createAccountRequest();
-    try {
-      accountServiceImpl.newAccount(request);
-    } catch (CustomerNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
 
   private AccountRequest createAccountRequest() {
     AccountRequest accountRequest = new AccountRequest();
