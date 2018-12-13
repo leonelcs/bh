@@ -1,0 +1,76 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
+
+buildscript {
+    ext {
+        springBootVersion = '2.1.1.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}",
+                "se.transmode.gradle:gradle-docker:1.2")
+    }
+
+}
+
+task buildDocker(type: Docker) {
+    push = false
+    tagVersion = 'latest'
+
+    exposePort(8090)
+
+    volume('/tmp')
+    addFile {
+        from jar
+        rename {'transaction.jar'}
+    }
+    setEntryPoint(["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/transaction.jar"])
+    runCommand('addgroup --gid 1000 --system app && adduser --uid 1000 --system app --ingroup app')
+    addInstruction('USER', '1000')
+}
+buildDocker.dependsOn(build)
+
+ext['springCloudVersion'] = 'Greenwich.M3'
+
+docker {
+    baseImage "openjdk:8-jdk-alpine"
+    maintainer 'Leonel "leonelcs@gmail.com"'
+}
+
+group = 'br.com.leonel.blueharvest'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-hateoas')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.projectlombok:lombok:1.18.2')
+    //Lombok
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
+    implementation('org.springframework.cloud:spring-cloud-starter-openfeign')
+
+    //runtimeonly
+    runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    //database
+    runtime 'org.postgresql:postgresql:9.4-1206-jdbc42'
+    //tests
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}

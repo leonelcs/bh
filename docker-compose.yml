@@ -1,0 +1,27 @@
+version: '3'
+services:
+  account:
+    image: br.com.leonel.blueharvest/account:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+  transaction:
+    image: br.com.leonel.blueharvest/transaction:latest
+    ports:
+      - 8090:8090
+    depends_on:
+      - postgres
+
+  postgres:
+      restart: always
+      ports:
+          - '5432:5432'
+      image: kiasaki/alpine-postgres:9.5
+      hostname: bh-db
+      environment:
+          POSTGRES_PASSWORD: psql123
+          POSTGRES_USER: postgres
+          POSTGRES_DB: bh
+
+
