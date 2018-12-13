@@ -1,5 +1,6 @@
 package br.com.leonel.blueharvest.account.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Customer {
 
   private String surname;
 
+  @JsonManagedReference
   @OneToMany(cascade= CascadeType.ALL, mappedBy="customer")
   private List<Account> accounts;
 
